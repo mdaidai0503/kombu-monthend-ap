@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17324d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="月末在庫処理">
+  <title>月末在庫処理 v1.2</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <style>
+    :root{--bg:#f5f7fa;--card:#fff;--line:#dfe5ec;--ink:#18212b;--muted:#607080;--accent:#17324d}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+    .wrap{max-width:1020px;margin:0 auto;padding:20px 16px 80px} h1{font-size:24px;margin:4px 0 8px}.sub{color:var(--muted);margin-bottom:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+    label{display:block;font-weight:700;margin-bottom:6px} input,select,button{font:inherit} input[type=file],select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:var(--accent);color:white}.secondary{background:#e9eef4;color:#17324d}.good{background:#137333;color:#fff}
+    button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.status{font-size:14px;line-height:1.7;white-space:pre-wrap;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:90px}
+    table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}th{background:#f8fafc;position:sticky;top:0}
+    .warn{color:#b54708;font-weight:700}.ok{color:#137333;font-weight:700}.note{font-size:13px;color:var(--muted);line-height:1.6}.section-title{font-size:18px;margin:0 0 10px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>月末在庫処理 <small style="font-size:13px;color:#607080">v1.2</small></h1>
+  <div class="sub">昆布在庫管理とは完全に独立した、月末在庫証明PDF専用アプリです。</div>
+
+  <div class="card">
+    <h2 class="section-title">① 前月・当月PDFを選択</h2>
+    <div class="grid">
+      <div><label>前月PDF</label><input id="prevFile" type="file" accept="application/pdf"><select id="prevMonth"></select></div>
+      <div><label>当月PDF</label><input id="currFile" type="file" accept="application/pdf"><select id="currMonth"></select></div>
+    </div>
+    <div class="actions"><button id="runBtn" class="primary">月末処理を実行</button><button id="resetBtn" class="secondary">リセット</button></div>
+  </div>
+
+  <div class="card"><h2 class="section-title">処理状況</h2><div id="status" class="status">PDFを選択してください。</div></div>
+
+  <div class="card">
+    <h2 class="section-title">② 並べ替え ＋ ③ 差異ページのみ右端色付け</h2>
+    <div class="actions">
+      <button id="downloadPrevSortedMarked" class="secondary" disabled>前月・並べ替え＋差異色付けPDF</button>
+      <button id="downloadCurrSortedMarked" class="secondary" disabled>当月・並べ替え＋差異色付けPDF</button>
+    </div>
+    <p class="note">ページは一切抜き出しません。全ページを指定順に並べたまま保存し、前月と数量差異があるページだけ右端約1cmを月別色で表示します。差異のないページは色を付けません。7月＝黄色、8月＝赤です。</p>
+  </div>
+
+    <div class="card">
+    <h2 class="section-title">④ 当月・生産年度別 各社合計</h2>
+    <div class="actions"><button id="downloadAggregate" class="good" disabled>生産年度別・各社合計PDF</button><button id="downloadIndexCsv" class="secondary" disabled>分類一覧CSV</button></div>
+    <p class="note">釧路産昆布・根室産昆布・釧路産棹前昆布を対象に、同じ生産年度の各社PDFの同じ位置の数量を合算します。元帳票を背景に使い、数量欄だけを合計値へ置き換えます。</p>
+  </div>
+
+  <div class="card"><h2 class="section-title">⑤ 結果をまとめて保存</h2><div class="actions"><button id="downloadZip" class="good" disabled>結果一式ZIP</button></div></div>
+
+  <div class="card"><h2 class="section-title">解析結果</h2><div style="overflow:auto;max-height:460px"><table><thead><tr><th>月</th><th>元ページ</th><th>産地</th><th>年度</th><th>会社</th><th>差異</th></tr></thead><tbody id="resultBody"></tbody></table></div></div>
+</div>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="./config.js"></script>
+<script type="module" src="./app.js"></script>
+</body></html>
