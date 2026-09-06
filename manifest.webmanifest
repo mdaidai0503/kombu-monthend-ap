@@ -1,9 +1,0 @@
-{
-  "name": "月末在庫処理",
-  "short_name": "月末在庫",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#f5f7fa",
-  "theme_color": "#17324d",
-  "lang": "ja"
-}
